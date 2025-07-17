@@ -27,12 +27,43 @@ class CodeController < ApplicationController
     def update
         name = params[:name]
         value = params[:value]
-        render json: { name: name, value: value }, status: :ok
+        access_token = params[:access_token] || nil
+        # check if name needs access token
+        code_item = CodeItem.find_by(name: name)
+        if code_item && code_item.require_access_write && access_token != code_item.access_token
+            render json: { error: "Access denied" }, status: :forbidden
+            return
+        end
+        # update the value with the name
+        if code_item
+            code_item.value = value
+            if code_item.save
+                render json: { name: code_item.name, value: code_item.value }, status: :ok
+            else
+                render json: { errors: code_item.errors.full_messages }, status: :unprocessable_entity
+            end
+        else
+            # if the code item does not exist, we return an error
+            render json: { error: "Code item not found" }, status: :not_found
+            return
+        end
     end
     # get "value/:name" => "code#value", as: :get_value
     def value
         name = params[:name]
-        
+        access_token = params[:access_token] || nil
+        # Check if name needs access token
+        code_item = CodeItem.find_by(name: name)
+        if code_item && code_item.require_access_read && access_token != code_item.access_token
+            render json: { error: "Access denied" }, status: :forbidden
+            return
+        end
+        value = code_item ? code_item.value : nil
+        if value.nil?
+            render json: { error: "Value not found" }, status: :not_found
+            return
+        end
+        # Return the value associated with the name
         render json: { name: name, value: value }, status: :ok
     end
     # delete "code/:name" => "code#delete", as: :delete_value
