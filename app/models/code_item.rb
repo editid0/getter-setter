@@ -3,24 +3,24 @@ class CodeItem < ApplicationRecord
     validates :value, presence: true
     validates :access_token, presence: true, uniqueness: true
     validates :delete_token, presence: true, uniqueness: true
-	
+
     def requires_read_token?
-		require_access_read
+    require_access_read
     end
 
     def requires_write_token?
-		require_access_write
+    require_access_write
     end
 
     def can_read?(token = nil)
-		!requires_read_token? || access_token == token
+    !requires_read_token? || access_token == token
     end
 
     def can_write?(token = nil)
-		!requires_write_token? || access_token == token
+    !requires_write_token? || access_token == token
     end
 
     def can_delete?(token = nil)
-		delete_token == token
+    delete_token == token
     end
 end

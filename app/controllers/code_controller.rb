@@ -2,7 +2,7 @@ class CodeController < ApplicationController
     skip_before_action :verify_authenticity_token # This disables the csrf protection, because it wasn't working with bruno
     # post "code/:name" => "code#create", as: :create_code
     def create
-        # This function creates a new code entry, if it doesn't already exist, with the 
+        # This function creates a new code entry, if it doesn't already exist, with the given name and value.
         name = params[:name]
         value = params[:value]
         access_token = SecureRandom.uuid
@@ -45,7 +45,7 @@ class CodeController < ApplicationController
         else
             # if the code item does not exist, we return an error
             render json: { error: "Code item not found" }, status: :not_found
-            return
+            nil
         end
     end
     # get "value/:name" => "code#value", as: :get_value
@@ -83,7 +83,7 @@ class CodeController < ApplicationController
         else
             # if the code item does not exist, we return an error
             render json: { error: "Code item not found" }, status: :not_found
-            return
+            nil
         end
     end
 end
