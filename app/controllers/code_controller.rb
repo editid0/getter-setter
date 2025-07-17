@@ -69,7 +69,21 @@ class CodeController < ApplicationController
     # delete "code/:name" => "code#delete", as: :delete_value
     def delete
         name = params[:name]
-        # Logic to delete the value associated with the name
-        render json: { message: "Value for #{name} deleted" }, status: :no_content
+        delete_token = params[:delete_token] || nil
+        # we check if the name needs a delete token
+        code_item = CodeItem.find_by(name: name)
+        if code_item && code_item.require_access_write && delete_token != code_item.delete_token
+            render json: { error: "Access denied" }, status: :forbidden
+            return
+        end
+        # delete the code item with the name
+        if code_item
+            code_item.destroy
+            render json: { message: "Code item deleted successfully" }, status: :ok
+        else
+            # if the code item does not exist, we return an error
+            render json: { error: "Code item not found" }, status: :not_found
+            return
+        end
     end
 end
