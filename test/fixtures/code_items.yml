@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  value: MyText
+  access_token: MyString
+  delete_token: MyString
+  require_access_read: false
+  require_access_write: false
+
+two:
+  name: MyString
+  value: MyText
+  access_token: MyString
+  delete_token: MyString
+  require_access_read: false
+  require_access_write: false

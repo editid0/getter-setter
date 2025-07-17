@@ -5,7 +5,23 @@ class CodeController < ApplicationController
         # This function creates a new code entry, if it doesn't already exist, with the 
         name = params[:name]
         value = params[:value]
-        render json: { name: name, value: value }, status: :created
+        access_token = SecureRandom.uuid
+        delete_token = SecureRandom.uuid
+        require_access_read = params[:require_access_read] || false
+        require_access_write = params[:require_access_write] || false
+        code = CodeItem.new(
+            name: name,
+            value: value,
+            access_token: access_token,
+            delete_token: delete_token,
+            require_access_read: require_access_read,
+            require_access_write: require_access_write
+        )
+        if code.save
+            render json: { name: code.name, value: code.value, access_token: code.access_token, delete_token: code.delete_token }, status: :created
+        else
+            render json: { errors: code.errors.full_messages }, status: :unprocessable_entity
+        end
     end
     # post "value/:name" => "code#update", as: :update_value
     def update
@@ -16,7 +32,7 @@ class CodeController < ApplicationController
     # get "value/:name" => "code#value", as: :get_value
     def value
         name = params[:name]
-        value = "Sample Value" # This would typically fetch the value from a database or service
+        
         render json: { name: name, value: value }, status: :ok
     end
     # delete "code/:name" => "code#delete", as: :delete_value
