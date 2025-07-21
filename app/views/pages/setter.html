@@ -1,14 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="container">
+	<h1>Setter</h1>
+	<p>This page is designed to set a variable, you can retrieve it using the getter page, <a href="/getter">here</a>.
+	</p>
+</div>
+<div class="container">
+	<h2>Set Variable</h2>
+	<div class="row">
+		<label for="name">Variable Name:</label>
+		<input type="text" id="name" name="name" required class="textfield" maxlength="20">
+	</div>
+	<div class="row">
+		<label for="value">Value:</label>
+		<input type="text" id="value" name="value" required class="textfield" maxlength="100">
+	</div>
+	<div class="row">
+		<label for="read">Require access token to read value:</label>
+		<input type="checkbox" id="read" name="read" class="toggle">
+	</div>
+	<div class="row">
+		<label for="write">Require access token to set value:</label>
+		<input type="checkbox" id="write" name="write" class="toggle">
+	</div>
+	<button type="submit" class="button">Set Variable</button>
+</div>
+<div class="container">
+	<h2>Information</h2>
+	<p>To get the contents of a variable, you can either use the getter page, or make a direct GET request to
+		<code>/code/{variable_name}</code> if you don't need an access token, or
+		<code>/code/{variable_name}?access_token={token}</code> if you do.
+	</p>
+	<p>To delete a value, you can go to the deleter page <a href="/deleter">here</a>. Or you can make a DELETE request
+		to <code>/code/{variable_name}?delete_token={token}</code> if you do.
+	</p>
+</div>
+<dialog class="dialog">
+	<div class="dialog-content">
+		<h2>Tokens</h2>
+		<p id="access_token"></p>
+		<p id="delete_token"></p>
+	</div>
+</dialog>
+<style>
+	body {
+		font-family: Arial, Helvetica, sans-serif;
+	}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+	.container {
+		max-width: 30cm;
+		width: 30%;
+		margin: 0 auto;
+	}
 
-<body>
-    <p>YOOOO</p>
-</body>
+	.row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: .5rem;
+		margin-top: .5rem;
+		margin-bottom: .5rem;
+	}
 
-</html>
+	.toggle {
+		width: 20px;
+		height: 20px;
+	}
+
+	.textfield {
+		width: 100%;
+		padding: 0.5rem;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
+	.button {
+		padding: 0.5rem 1rem;
+		background-color: #007bff;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+</style>
+<script>
+	const button = document.querySelector("button");
+	const nameInput = document.querySelector("#name");
+	const valueInput = document.querySelector("#value");
+	const readInput = document.querySelector("#read");
+	const writeInput = document.querySelector("#write");
+	const dialog = document.querySelector(".dialog");
+	const accessTokenDisplay = document.querySelector("#access_token");
+	const deleteTokenDisplay = document.querySelector("#delete_token");
+	button.addEventListener("click", async () => {
+		const name = nameInput.value;
+		const value = valueInput.value;
+		const read = readInput.checked;
+		const write = writeInput.checked;
+		if (!name || !value) {
+			alert("Please fill in all fields.");
+			return;
+		}
+		var url = '/code/' + name;
+		url += '?value=' + encodeURIComponent(value);
+		url += '&require_access_read=' + read;
+		url += '&require_access_write=' + write;
+		const response = await fetch(url, {
+			method: "POST"
+		});
+		if (response.ok) {
+			// Parse json response
+			const data = await response.json();
+			const accessToken = data.access_token;
+			const deleteToken = data.delete_token;
+			alert("Variable set successfully!\nAccess Token: " + accessToken + "\nDelete Token: " + deleteToken);
+			accessTokenDisplay.textContent = "Access Token: " + accessToken;
+			deleteTokenDisplay.textContent = "Delete Token: " + deleteToken;
+			dialog.showModal();
+			// Clear inputs
+			nameInput.value = '';
+			valueInput.value = '';
+			readInput.checked = false;
+			writeInput.checked = false;
+		} else {
+			const error = await response.json();
+			alert("Error setting variable: " + error.errors.join(", "));
+		}
+	});
+</script>

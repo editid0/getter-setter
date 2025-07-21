@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   # root "posts#index"
   root "pages#homepage"
   get "setter" => "pages#setter", as: :setter
+  get "getter" => "pages#getter", as: :getter
+  get "deleter" => "pages#deleter", as: :deleter
   post "code/:name" => "code#create", as: :create_code
   post "value/:name" => "code#update", as: :update_value
   get "value/:name" => "code#value", as: :get_value
