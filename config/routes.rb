@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  root "pages#homepage"
+  get "setter" => "pages#setter", as: :setter
   post "code/:name" => "code#create", as: :create_code
   post "value/:name" => "code#update", as: :update_value
   get "value/:name" => "code#value", as: :get_value
