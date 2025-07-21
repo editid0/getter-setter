@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get "setter" => "pages#setter", as: :setter
   get "getter" => "pages#getter", as: :getter
   get "deleter" => "pages#deleter", as: :deleter
+  get "updater" => "pages#updater", as: :updater
   post "code/:name" => "code#create", as: :create_code
   post "value/:name" => "code#update", as: :update_value
   get "value/:name" => "code#value", as: :get_value

@@ -1,0 +1,92 @@
+<div class="container">
+    <h1>Deleter</h1>
+    <p>This page is designed to delete a variable, you can set it using the setter page, <a href="/setter">here</a>.
+    </p>
+</div>
+<div class="container">
+    <h2>Delete Variable</h2>
+    <div class="row">
+        <label for="name">Variable Name:</label>
+        <input type="text" id="name" name="name" required class="textfield" maxlength="20">
+    </div>
+    <div class="row">
+        <label for="deletion_token">Deletion token:</label>
+        <input type="text" id="deletion_token" name="deletion_token" required class="textfield" maxlength="100">
+    </div>
+    <button type="submit" class="button">Delete Variable</button>
+</div>
+<div class="container">
+    <h2>Information</h2>
+    <p>To delete a variable, you can make a DELETE request to <code>/code/{variable_name}</code> with the following
+        parameters:</p>
+    <ul>
+        <li><code>delete_token</code>: The deletion token.</li>
+    </ul>
+</div>
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+        max-width: 30cm;
+        width: 30%;
+        margin: 0 auto;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: .5rem;
+        margin-top: .5rem;
+        margin-bottom: .5rem;
+    }
+
+    .toggle {
+        width: 20px;
+        height: 20px;
+    }
+
+    .textfield {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+<script>
+    const button = document.querySelector("button");
+    const nameInput = document.querySelector("#name");
+    const deletionTokenInput = document.querySelector("#deletion_token");
+    button.addEventListener("click", async () => {
+        const name = nameInput.value;
+        const deletionToken = deletionTokenInput.value;
+        if (!name || !deletionToken) {
+            alert("Please fill in all fields.");
+            return;
+        }
+        var url = '/code/' + name;
+        url += '?delete_token=' + encodeURIComponent(deletionToken);
+        const response = await fetch(url, {
+            method: "DELETE"
+        });
+        if (response.ok) {
+            alert('Variable deleted successfully!');
+            nameInput.value = '';
+            deletionTokenInput.value = '';
+        } else {
+            const error = await response.json();
+            alert("Error getting variable: " + error.error);
+        }
+    });
+</script>

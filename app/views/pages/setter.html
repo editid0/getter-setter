@@ -25,13 +25,13 @@
 </div>
 <div class="container">
 	<h2>Information</h2>
-	<p>To get the contents of a variable, you can either use the getter page, or make a direct GET request to
-		<code>/code/{variable_name}</code> if you don't need an access token, or
-		<code>/code/{variable_name}?access_token={token}</code> if you do.
-	</p>
-	<p>To delete a value, you can go to the deleter page <a href="/deleter">here</a>. Or you can make a DELETE request
-		to <code>/code/{variable_name}?delete_token={token}</code> if you do.
-	</p>
+	<p>To set a variable, you can make a POST request to <code>/code/{variable_name}</code> with the following
+		parameters:</p>
+	<ul>
+		<li><code>value</code>: The value to set the variable to.</li>
+		<li><code>require_access_read</code>: Whether to require an access token to read the variable.</li>
+		<li><code>require_access_write</code>: Whether to require an access token to write to the variable.</li>
+	</ul>
 </div>
 <dialog class="dialog">
 	<div class="dialog-content">
